@@ -1,9 +1,15 @@
 import requests
 import logging
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+rapid_api_key = os.getenv("RAPID_API_KEY")
 
 API_URL = "https://news67.p.rapidapi.com/v2/topic-search"
 HEADERS = {
-    "x-rapidapi-key": "d4a64e4ba2mshe7795420c303702p1b42d8jsnf933d4d02161",
+    "x-rapidapi-key": rapid_api_key,
     "x-rapidapi-host": "news67.p.rapidapi.com"
 }
 
