@@ -1,8 +1,11 @@
 import requests
 import openai
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-openai.api_key = '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'
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def generate_podcast_script_with_openai(topic: str):
     try:

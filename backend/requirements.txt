@@ -1,5 +1,3 @@
-OPENAI_API_KEY= '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'
-
 aiohappyeyeballs==2.4.4
 aiohttp==3.11.11
 aiosignal==1.3.2
@@ -56,3 +54,4 @@ typing_extensions==4.12.2
 urllib3==2.3.0
 uvicorn==0.34.0
 yarl==1.18.3
+python-dotenv
