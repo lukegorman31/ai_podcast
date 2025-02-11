@@ -39,8 +39,3 @@ def fetch_news_summaries(topic, batch_size=7):
         logging.error(f"Error fetching news: {e}")
         return []
 
-# Test the function
-if __name__ == "__main__":
-    topic = "Altcoins for 2025"
-    summaries = fetch_news_summaries(topic)
-    print(summaries)
