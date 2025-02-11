@@ -1,3 +1,10 @@
+v01 Web Interface !
+
+![Screenshot 2025-02-11 at 15 26 07](https://github.com/user-attachments/assets/cd135230-5713-41b9-9b4e-e3f590ec7a76)
+
+
+
+
 # AI Daily Commute Podcast Generator
 
 An automated podcast generation system that creates personalized news podcasts based on user-specified topics. Perfect for staying informed during your daily commute.
