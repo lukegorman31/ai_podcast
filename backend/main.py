@@ -1,71 +1,74 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
-from api_scrape import fetch_news_summaries  # Import scraper function
-from llm import generate_podcast_script_with_openai  # Import LLM function
-from tts import text_to_speech  # Import TTS function
+from api_scrape import fetch_news_summaries
+from llm import generate_podcast_script_with_openai
+from tts import text_to_speech
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
-# Middleware to handle CORS issues
+# --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for testing
+    allow_origins=["*"],  # Restrict this in production!
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
+# --- Logging ---
 logging.basicConfig(level=logging.INFO)
 
-# Define request model
+# --- Pydantic Model ---
 class TopicRequest(BaseModel):
     topic: str
 
 @app.get("/generate_podcast")
-def generate_podcast_endpoint(topic: str):
+async def generate_podcast_endpoint(topic: str):
     logging.info(f"Received request to generate podcast for topic: {topic}")
 
-    # Fetch news summaries
-    summaries = fetch_news_summaries(topic)
-    logging.info(f"Fetched summaries: {summaries}")
+    try:
+        summaries = fetch_news_summaries(topic)
+        logging.info(f"Fetched summaries: {summaries}")
 
-    if not summaries:
-        logging.error("Failed to fetch news summaries")
-        return JSONResponse(content={"error": "Failed to fetch news summaries"}, status_code=400)
+        if not summaries:
+            raise HTTPException(status_code=400, detail="Failed to fetch news summaries")
 
-    # Generate podcast script
-    podcast_script = generate_podcast_script_with_openai("\n".join(summaries))
-    logging.info(f"Generated podcast script: {podcast_script}")
+        podcast_script = generate_podcast_script_with_openai("\n".join(summaries))
+        logging.info(f"Generated podcast script: {podcast_script}")
 
-    if "Error" in podcast_script:
-        logging.error(podcast_script)
-        return JSONResponse(content={"error": podcast_script}, status_code=500)
+        if "Error" in podcast_script:
+            raise HTTPException(status_code=500, detail=podcast_script)
 
-    # Convert script to audio
-    audio_file_path = text_to_speech(podcast_script)
-    
-    return {
-        "message": "Podcast generated successfully",
-        "podcast_script": podcast_script,
-        "audio_url": f"http://127.0.0.1:8000/audio"
-    }
+        audio_file_path = text_to_speech(podcast_script)
+        if audio_file_path is None:
+            raise HTTPException(status_code=500, detail="Failed to generate audio")
+
+
+        return {
+            "message": "Podcast generated successfully",
+            "podcast_script": podcast_script,  # Consider removing long scripts
+            "audio_url": f"http://127.0.0.1:8000/audio"
+        }
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logging.exception("An unexpected error occurred")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/audio")
-def get_audio():
-    """Serves the generated podcast audio file."""
+async def get_audio():
     audio_file_path = "output.mp3"
-
     if not os.path.exists(audio_file_path):
-        return JSONResponse(content={"error": "Audio file not found"}, status_code=404)
-
+        raise HTTPException(status_code=404, detail="Audio file not found")
     return FileResponse(audio_file_path, media_type="audio/mpeg", filename="podcast.mp3")
 
-# Run the API
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

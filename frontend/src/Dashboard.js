@@ -6,7 +6,6 @@ import { Settings, LogOut, Mic, RefreshCw } from 'lucide-react';
 function Dashboard() {
   const navigate = useNavigate();
   const [topic, setTopic] = useState('');
-  const [podcastScript, setPodcastScript] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -33,7 +32,7 @@ function Dashboard() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) fetchUserProfile(session.user.id);
     };
-    
+
     fetchSession();
   }, []);
 
@@ -54,17 +53,58 @@ function Dashboard() {
     }
 
     setLoading(true);
+    setMessage('');
     try {
-      const response = await fetch(`/generate_podcast?topic=${encodeURIComponent(topic)}`);
+        // NO AUTHENTICATION HEADERS HERE
+      const response = await fetch(`http://127.0.0.1:8000/generate_podcast?topic=${encodeURIComponent(topic)}`, {
+        method: 'GET', // Explicitly set the method
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP Error: ${response.status}`);
+      }
+
       const data = await response.json();
-      setPodcastScript(data.podcast_script);
       setAudioUrl(data.audio_url);
       setMessage("✅ Podcast generated successfully!");
+
     } catch (error) {
       console.error("Error generating podcast:", error);
-      setMessage("❌ Failed to generate podcast.");
+      setMessage(`❌ Failed to generate podcast: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+    const updateSubscriptionType = async (newType) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.error("No user session found.");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ subscription_type: newType })
+        .eq('id', session.user.id);
+
+      if (error) {
+        throw error;
+      }
+
+        const updatedUser = {...userProfile, subscription_type: newType}
+        setUserProfile(updatedUser)
+        setSubscriptionType(newType); // Update local state
+        setMessage("✅ Subscription type updated!");
+
+    } catch (error) {
+      console.error("Error updating subscription type:", error);
+      setMessage("❌ Failed to update subscription type.");
     }
   };
 
@@ -93,21 +133,21 @@ function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-md">
           <h3 className="text-lg font-semibold mb-2">Subscription Plan</h3>
-          <select
+           <select
             value={subscriptionType}
-            onChange={(e) => setSubscriptionType(e.target.value)}
+            onChange={(e) => updateSubscriptionType(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="daily">Daily Plan</option>
             <option value="weekly">Weekly Plan</option>
           </select>
         </div>
-        
+
         <div className="bg-white p-6 rounded-xl shadow-md">
           <h3 className="text-lg font-semibold mb-2">Podcasts Generated</h3>
           <p className="text-3xl font-bold text-indigo-600">12</p>
         </div>
-        
+
         <div className="bg-white p-6 rounded-xl shadow-md">
           <h3 className="text-lg font-semibold mb-2">Next Available</h3>
           <p className="text-3xl font-bold text-green-600">Now</p>
@@ -144,23 +184,13 @@ function Dashboard() {
         )}
       </div>
 
-      {(podcastScript || audioUrl) && (
+      {audioUrl && (
         <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Generated Podcast</h2>
-          {podcastScript && (
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-2">Script</h3>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <pre className="whitespace-pre-wrap">{podcastScript}</pre>
-              </div>
-            </div>
-          )}
-          {audioUrl && (
-            <div>
-              <h3 className="text-lg font-medium mb-2">Audio</h3>
-              <audio src={audioUrl} controls className="w-full" />
-            </div>
-          )}
+          <div>
+            <h3 className="text-lg font-medium mb-2">Audio</h3>
+            <audio src={audioUrl} controls className="w-full" />
+          </div>
         </div>
       )}
     </div>
