@@ -14,6 +14,7 @@ frontend_pod/node_modules/
 /build
 
 # misc
+.vscode
 .DS_Store
 .env.local
 .env.development.local
@@ -26,3 +27,7 @@ yarn-error.log*
 
 
 .env
+backend/__pycache__/tts.cpython-39.pyc
+backend/__pycache__/main.cpython-39.pyc
+backend/__pycache__/llm.cpython-39.pyc
+backend/__pycache__/api_scrape.cpython-39.pyc
