@@ -13,7 +13,10 @@ jobs:
           fetch-depth: 0
 
       - name: Debug - List Files
-        run: ls -R
+        run: ls -lah
+
+      - name: Debug - Check Backend Directory
+        run: ls -lah backend || echo "Backend directory missing!"
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -23,15 +26,15 @@ jobs:
       - name: Install Dependencies
         run: |
           cd backend
-          python -m venv podcast_venv
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install pip-audit
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pip-audit
 
       - name: Run pip-audit
         run: |
           cd backend
-          python -m pip-audit
+          pip-audit
+
 
   frontend-security:
     name: Frontend Security Check
