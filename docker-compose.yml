@@ -1,0 +1,28 @@
+# ./docker-compose.yml
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - RAPID_API_KEY=${RAPID_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
+    volumes:
+      - ./backend:/app
+      - ./google_credentials.json:/app/google_credentials.json:ro
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend_pod
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
