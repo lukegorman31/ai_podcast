@@ -9,6 +9,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Debug - List Files
+        run: ls -R
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -19,14 +24,14 @@ jobs:
         run: |
           cd backend
           python -m venv podcast_venv
-          source podcast_venv/bin/activate
-          pip install -r requirements.txt
-          pip install pip-audit
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pip-audit
 
       - name: Run pip-audit
         run: |
           cd backend
-          pip-audit
+          python -m pip-audit
 
   frontend-security:
     name: Frontend Security Check
@@ -34,6 +39,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Debug - List Files
+        run: ls -R
 
       - name: Set Up Node.js
         uses: actions/setup-node@v3
@@ -42,10 +52,10 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd frontend_pod
+          cd frontend
           npm install
 
       - name: Run npm audit
         run: |
-          cd frontend_pod
+          cd frontend
           npm audit --audit-level=moderate
