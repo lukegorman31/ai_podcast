@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from api_scrape import fetch_news_summaries
 from llm import generate_podcast_script_with_openai
 from tts import text_to_speech
+from tavily_search import tavily_search
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 import os
@@ -34,7 +35,7 @@ async def generate_podcast_endpoint(topic: str):
     logging.info(f"Received request to generate podcast for topic: {topic}")
 
     try:
-        summaries = fetch_news_summaries(topic)
+        summaries = tavily_search(topic)
         logging.info(f"Fetched summaries: {summaries}")
 
         if not summaries:
@@ -64,7 +65,7 @@ async def generate_podcast_endpoint(topic: str):
 
 @app.get("/audio")
 async def get_audio():
-    audio_file_path = "output.mp3"
+    audio_file_path = "podcast.mp3"
     if not os.path.exists(audio_file_path):
         raise HTTPException(status_code=404, detail="Audio file not found")
     return FileResponse(audio_file_path, media_type="audio/mpeg", filename="podcast.mp3")
