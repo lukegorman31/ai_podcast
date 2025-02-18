@@ -1,10 +1,3 @@
-v01 Web Interface !
-
-![Screenshot 2025-02-11 at 15 26 07](https://github.com/user-attachments/assets/cd135230-5713-41b9-9b4e-e3f590ec7a76)
-
-
-
-
 # AI Daily Commute Podcast Generator
 
 An automated podcast generation system that creates personalized news podcasts based on user-specified topics. Perfect for staying informed during your daily commute.
@@ -31,59 +24,71 @@ An automated podcast generation system that creates personalized news podcasts b
 
 ## Setup
 
+You can set up this project either manually or using Docker.
+
+### Option 1: Docker Setup (Recommended)
+
+1. Clone the repository
+
+2. Set up environment variables:
+   Create a `.env` file in the root directory with:
+   ```
+   RAPID_API_KEY=your_news67_api_key
+   OPENAI_API_KEY=your_openai_api_key
+   ```
+
+3. Place your Google Cloud credentials file as `google_credentials.json` in the root directory
+
+4. Build and run with Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+
+5. Access the application at `http://localhost:3000`
+
+### Option 2: Manual Setup
+
 1. Clone the repository
 
 2. Install backend dependencies:
-
-``` bash
-cd backend
-
-python -m venv podcast_venv
-
-source podcast_venv/bin/activate # On Windows: podcast_venv\Scripts\activate
-
-
-pip install -r requirements.txt
-```
-
+   ```bash
+   cd backend
+   python -m venv podcast_venv
+   source podcast_venv/bin/activate # On Windows: podcast_venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
 
 3. Set up environment variables:
-
-Create a `.env` file in the backend directory with:
-
-``` 
-RAPID_API_KEY=your_news67_api_key
-OPENAI_API_KEY=your_openai_api_key
-GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_cloud_credentials.json
-```
+   Create a `.env` file in the backend directory with:
+   ```
+   RAPID_API_KEY=your_news67_api_key
+   OPENAI_API_KEY=your_openai_api_key
+   GOOGLE_APPLICATION_CREDENTIALS=path_to_your_google_cloud_credentials.json
+   ```
 
 4. Install frontend dependencies:
-
-``` bash
-cd frontend_pod
-npm install
-```
-
----
+   ```bash
+   cd frontend_pod
+   npm install
+   ```
 
 ## Running the Application
 
+### With Docker
+The application will start automatically after running `docker-compose up --build`
+
+### Manual Start
 1. Start the backend server:
-
-``` bash
-cd backend
-uvicorn main:app --reload
-
-```
-
+   ```bash
+   cd backend
+   uvicorn main:app --reload
+   ```
 
 2. Start the frontend development server:
-
-``` bash
-cd frontend_pod
-npm start
-```
-
+   ```bash
+   cd frontend_pod
+   npm start
+   ```
 
 3. Access the application at `http://localhost:3000`
 
