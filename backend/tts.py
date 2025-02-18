@@ -28,7 +28,7 @@ def text_to_speech(podcast_script):
             input=synthesis_input, voice=voice, audio_config=audio_config
         )
 
-        file_path = "output.mp3"
+        file_path = "podcast.mp3"
         with open(file_path, "wb") as out:
             out.write(response.audio_content)
 
