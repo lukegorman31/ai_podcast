@@ -2,6 +2,11 @@
 
 An automated podcast generation system that creates personalized news podcasts based on user-specified topics. Perfect for staying informed during your daily commute.
 
+
+V01 Web APP Interface 
+
+![Screenshot 2025-02-11 at 15 26 07](https://github.com/user-attachments/assets/8e687583-9857-497e-97b8-01ab500c476b)
+
 ## Features
 
 - Real-time news fetching using News67 API
