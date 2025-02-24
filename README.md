@@ -9,7 +9,7 @@ V01 Web APP Interface
 
 ## Features
 
-- Real-time news fetching using News67 API
+- Real-time news fetching using News67/Tavily API
 - AI-powered podcast script generation using OpenAI GPT-3.5
 - Text-to-speech conversion using Google Cloud TTS
 - User-friendly web interface
