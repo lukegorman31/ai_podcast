@@ -3,9 +3,10 @@
 An automated podcast generation system that creates personalized news podcasts based on user-specified topics. Perfect for staying informed during your daily commute.
 
 
-V01 Web APP Interface 
+## Systems Diagram 
+![AI POD](https://github.com/user-attachments/assets/77883a78-0689-4f41-9aa4-5c5b5e2b9436)
 
-![Screenshot 2025-02-11 at 15 26 07](https://github.com/user-attachments/assets/8e687583-9857-497e-97b8-01ab500c476b)
+
 
 ## Features
 
@@ -26,6 +27,10 @@ V01 Web APP Interface
 ### Frontend
 - React.js
 - CSS for styling
+
+## V01 Web APP Interface 
+
+![Screenshot 2025-02-11 at 15 26 07](https://github.com/user-attachments/assets/8e687583-9857-497e-97b8-01ab500c476b)
 
 ## Setup
 
